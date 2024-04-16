@@ -2,8 +2,6 @@ import org.junit.rules.ExternalResource;
 import org.openqa.selenium.WebDriver;
 import org.burger.DriverSetup;
 import java.time.Duration;
-
-
 public class BrowserPrepareTest extends ExternalResource {
     private WebDriver webDriver;
     // для запуска тестов в Firefox использовать значение "firefox, для запуска в ''chrome использовать ''chrome"
@@ -23,4 +21,5 @@ public class BrowserPrepareTest extends ExternalResource {
     protected void after() {
         webDriver.quit();
     }
+
 }

@@ -1,4 +1,5 @@
-package page_object;
+package pageobject;
+import io.qameta.allure.Step;
 import user.User;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -21,8 +22,8 @@ public class SignUpPage {
     public SignUpPage(WebDriver webDriver) {
         this.webDriver = webDriver;
     }
-
-    public void InsertDataForSignUp(User user) {
+    @Step("Ввод данных пользователя для успешной Регистрации")
+    public void insertDataForSignUp(User user) {
         insertName(user.getName());
         insertEmail(user.getEmail());
         insertPassword(user.getPassword());
@@ -31,7 +32,6 @@ public class SignUpPage {
     public void waitingForSignUpPageLoading() {
         new WebDriverWait(webDriver, Duration.ofSeconds(5)).until(ExpectedConditions.visibilityOfElementLocated(signUpFormTitle));
     }
-
     public void insertName(String name) {
         webDriver.findElement(nameInputBox).sendKeys(name);
     }
@@ -43,15 +43,15 @@ public class SignUpPage {
     public void insertPassword(String password) {
         webDriver.findElement(passwordInputBox).sendKeys(password);
     }
-
+    @Step("Клик по кнопке Зарегестрироваться на странице Регистрации")
     public void clickSignUpButton() {
         webDriver.findElement(signUpButton).click();
     }
-
+    @Step("Клик по кнопке Войти на странице Регистрации")
     public void clickSignInLink() {
         webDriver.findElement(signInLink).click();
     }
-
+    @Step("Проверка отображения ошибке о неккоректном пароле на странице Регистрации")
     public boolean checkSignUpWrongPasswordError() {
         return webDriver.findElement(wrongPasswordMessage).isDisplayed();
     }

@@ -1,4 +1,5 @@
-package page_object;
+package pageobject;
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -19,18 +20,18 @@ public class PersonalAccountPage {
     }
 
     public void waitingForProfilePageLoading() {
-        new WebDriverWait(webDriver, Duration.ofSeconds(5))
+        new WebDriverWait(webDriver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(menuProfileLink));
     }
-
+    @Step("Клик по кнопке Выход на странице Личный Кабинет")
     public void exitButtonClick() {
         webDriver.findElement(exitButton).click();
     }
-
+    @Step("Клик по Логотипу на странице Личный Кабинет")
     public void burgerMainLogoClick() {
         webDriver.findElement(burgerMainLogo).click();
     }
-
+    @Step("Клик по Конструктору в шапке на странице Личный Кабинет")
     public void headerConstructorButtonClick() {
         webDriver.findElement(headerConstructorButton).click();
     }

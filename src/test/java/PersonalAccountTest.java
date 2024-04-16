@@ -1,18 +1,18 @@
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import user.*;
-import page_object.*;
+import pageobject.*;
 import org.burger.*;
 import org.junit.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.html5.LocalStorage;
 import org.openqa.selenium.html5.WebStorage;
 
+import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class PersonalAccountTest {
+public class PersonalAccountTest extends BaseUriTest {
     @Rule
     public BrowserPrepareTest prepareTest = new BrowserPrepareTest();
     public MainPage mainPage;
@@ -29,18 +29,13 @@ public class PersonalAccountTest {
         loginPage = new LoginPage(webDriver);
         personalAccountPage = new PersonalAccountPage(webDriver);
         webDriver.get(Endpoints.BASE_URL);
-        LocalStorage localStorage = ((WebStorage) webDriver).getLocalStorage();
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
     }
 
     @BeforeClass
     public static void beforeClass() {
-        RestAssured.baseURI = Endpoints.BASE_URL;
         user = RandomUser.createRandomUser();
         Response response = UserAPI.createUser(user);
         accessToken = response.path("accessToken");
-        refreshToken = response.path("refreshToken");
     }
 
     @AfterClass
@@ -51,7 +46,8 @@ public class PersonalAccountTest {
     @Test
     @DisplayName("Проверка выхода из аккаунта")
     public void checkProfileExitButton() {
-        mainPage.waitingForMainPageLoading();
+        mainPage.enterPersonalAccount();
+        loginPage.insertDataAndClickLoginButton(user);
         mainPage.clickOnProfileEnterButton();
         personalAccountPage.waitingForProfilePageLoading();
         personalAccountPage.exitButtonClick();
@@ -62,7 +58,8 @@ public class PersonalAccountTest {
     @Test
     @DisplayName("Проверка перехода на Главную из Акаунта (клик на логотип)")
     public void checkMoveToMainPageAfterLogin() {
-        mainPage.waitingForMainPageLoading();
+        mainPage.enterPersonalAccount();
+        loginPage.insertDataAndClickLoginButton(user);
         mainPage.clickOnProfileEnterButton();
         personalAccountPage.waitingForProfilePageLoading();
         personalAccountPage.burgerMainLogoClick();
@@ -74,7 +71,8 @@ public class PersonalAccountTest {
     @Test
     @DisplayName("Проверка перехода на Главную из Акаунта (клик на Конструктор)")
     public void checkMoveFromProfileClickingOnLogoButton() {
-        mainPage.waitingForMainPageLoading();
+        mainPage.enterPersonalAccount();
+        loginPage.insertDataAndClickLoginButton(user);
         mainPage.clickOnProfileEnterButton();
         personalAccountPage.waitingForProfilePageLoading();
         personalAccountPage.headerConstructorButtonClick();
@@ -85,10 +83,13 @@ public class PersonalAccountTest {
     @Test
     @DisplayName("Переход в личный кабинет пользователя с главной страницы")
     public void checkFromMainToPersonalPassage() {
-        mainPage.waitingForMainPageLoading();
+        mainPage.enterPersonalAccount();
+        loginPage.insertDataAndClickLoginButton(user);
         mainPage.clickOnProfileEnterButton();
         personalAccountPage.waitingForProfilePageLoading();
         assertEquals("Перешли в личный кабинет по нажатию на кнопку 'Личный Кабинет' на главной странице", Endpoints.BASE_URL + Endpoints.PROFILE, webDriver.getCurrentUrl());
     }
 
 }
+
+

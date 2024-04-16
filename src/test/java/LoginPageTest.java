@@ -1,15 +1,14 @@
 import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import user.*;
 import org.junit.*;
 import org.openqa.selenium.WebDriver;
-import page_object.*;
+import pageobject.*;
 import org.burger.*;
 
 import static org.junit.Assert.assertTrue;
 
-public class LoginPageTest {
+public class LoginPageTest extends BaseUriTest {
     @Rule
     public BrowserPrepareTest prepareTest = new BrowserPrepareTest();
     public static WebDriver webDriver;
@@ -27,7 +26,6 @@ public class LoginPageTest {
 
     @BeforeClass
     public static void beforeClass() {
-        RestAssured.baseURI = Endpoints.BASE_URL;
         user = RandomUser.createRandomUser();
         accessToken = UserAPI.createUser(user).path("accessToken");
     }
@@ -38,9 +36,10 @@ public class LoginPageTest {
     }
 
     @Test
+    @DisplayName("Авторизация по кнопке Войти со страницы логина")
     public void checkLoginPage() {
         webDriver.get(Endpoints.BASE_URL + Endpoints.LOGIN);
-        assertSuccessAuth();
+        loginPage.assertSuccessAuth(user, mainPage);
     }
 
     @Test
@@ -49,7 +48,7 @@ public class LoginPageTest {
         webDriver.get(Endpoints.BASE_URL);
         mainPage.waitingForMainPageLoading();
         mainPage.clickOnProfileEnterButton();
-        assertSuccessAuth();
+        loginPage.assertSuccessAuth(user, mainPage);
     }
 
     @Test
@@ -58,7 +57,7 @@ public class LoginPageTest {
         webDriver.get(Endpoints.BASE_URL);
         mainPage.waitingForMainPageLoading();
         mainPage.clickOnAccountEnterButton();
-        assertSuccessAuth();
+        loginPage.assertSuccessAuth(user, mainPage);
     }
 
     @Test
@@ -67,7 +66,7 @@ public class LoginPageTest {
         webDriver.get(Endpoints.BASE_URL + Endpoints.REGISTER);
         SignUpPage signUpPage = new SignUpPage(webDriver);
         signUpPage.clickSignInLink();
-        assertSuccessAuth();
+        loginPage.assertSuccessAuth(user, mainPage);
     }
 
     @Test
@@ -76,21 +75,9 @@ public class LoginPageTest {
         webDriver.get(Endpoints.BASE_URL + Endpoints.PASSWORD_RECOVER);
         PasswordPage passwordPagePage = new PasswordPage(webDriver);
         passwordPagePage.clickSignInLink();
-        assertSuccessAuth();
+        loginPage.assertSuccessAuth(user, mainPage);
     }
 
 
-    @Step("Главная страница  загружена, кнопка 'Оформить заказ' отображается")
-    public static boolean mainPageLoadedAfterLogin() {
-        MainPage mainPage = new MainPage(webDriver);
-        mainPage.waitingForMainPageLoading();
-        return mainPage.orderPlaceButtonIsDisplayed();
-    }
-@Step ("Проверка успешной авторизации и перехода на главную страницу")
-    public static void assertSuccessAuth(){
-        loginPage.waitForLoginPageIsLoaded();
-        assertTrue("Авторизация прошла успешно", webDriver.getCurrentUrl().equals(Endpoints.BASE_URL + Endpoints.LOGIN));
-        loginPage.insertDataAndClickLoginButton(user);
-        assertTrue("Перешли на главную страницу", mainPageLoadedAfterLogin());
-    }
+
 }
